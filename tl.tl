@@ -22,6 +22,7 @@ local record tl
       "5.1"
       "5.3"
       "5.4"
+      "Playdate"
    end
 
    record TypeCheckOptions
@@ -3854,10 +3855,15 @@ function tl.pretty_print_ast(ast: Node, gen_target: TargetMode, mode: boolean | 
          after = function(node: Node, children: {Output}): Output
             local out: Output = { y = node.y, h = 0 }
             if node.op.op == "@funcall" then
-               add_child(out, children[1], "", indent)
-               table.insert(out, "(")
-               add_child(out, children[3], "", indent)
-               table.insert(out, ")")
+               if gen_target == "Playdate" and node_is_require_call(node) then
+                  add_string(out, "import ")
+                  add_child(out, children[3], "", indent)
+               else
+                  add_child(out, children[1], "", indent)
+                  table.insert(out, "(")
+                  add_child(out, children[3], "", indent)
+                  table.insert(out, ")")
+               end
             elseif node.op.op == "@index" then
                add_child(out, children[1], "", indent)
                table.insert(out, "[")
@@ -9664,6 +9670,8 @@ function tl.target_from_lua_version(str: string): TargetMode
       return "5.3"
    elseif str == "Lua 5.4" then
       return "5.4"
+   elseif str == "Playdate" then
+      return "Playdate"
    end
 end
 
