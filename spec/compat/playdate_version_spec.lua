@@ -13,5 +13,5 @@ import "os"
 
 function hello(n)
    return 9
-end]], "Playdate", true))
+end]], "playdate", true))
 end)
